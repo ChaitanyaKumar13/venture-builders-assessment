@@ -6,6 +6,35 @@ own API, own frontend) for the Venture Builders assessment.
 
 > Task 2 of the assessment. Runs independently via a single `docker compose up`.
 
+## Fastest way to evaluate (for reviewers)
+
+The service is provider-agnostic. The **quickest path to a working demo is a
+hosted LLM key** (no local model install). Any OpenAI-compatible key works —
+[Groq](https://console.groq.com) offers a free one that streams well:
+
+```bash
+cd services/ai-query-assistant
+cp .env.example .env
+```
+
+Then set these four lines in `.env`:
+
+```
+LLM_PROVIDER=openai
+OPENAI_BASE_URL=https://api.groq.com/openai/v1   # or https://api.openai.com/v1
+OPENAI_API_KEY=<your-key>
+OPENAI_MODEL=llama-3.1-8b-instant                # or gpt-4o-mini for OpenAI
+```
+
+```bash
+docker compose up --build
+# Frontend: http://localhost:3000   Backend health: http://localhost:4001/health
+```
+
+Prefer a fully local, no-key setup? Use Ollama instead — see
+[Quick start (Docker)](#quick-start-docker) below. Either way, if the chat shows
+a ⚠️, the backend simply can't reach an LLM yet — pick one of the two paths above.
+
 ## Features
 
 - ChatGPT-like chat interface (Next.js)
