@@ -7,7 +7,7 @@ runnable on its own via `docker compose up`.
 |---|---------|--------|--------|
 | 1 | Consulting Service Booking (Stripe + Google Calendar + email) | `services/booking-service` | in progress |
 | 2 | **AI Query Assistant** (streaming, multi-session chat) | `services/ai-query-assistant` | ✅ complete |
-| 3 | Resume Builder (Next.js + Tiptap + LLM + ATS templates) | `services/resume-builder` | in progress |
+| 3 | **Resume Builder** (Next.js + Tiptap + LLM + ATS templates) | `services/resume-builder` | ✅ complete |
 
 ## Architecture
 
