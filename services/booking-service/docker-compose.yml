@@ -1,0 +1,49 @@
+# Consulting Booking service: Postgres + backend (Stripe/Calendar/email) + frontend.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-booking}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-booking_password}
+      POSTGRES_DB: ${POSTGRES_DB:-booking}
+    volumes:
+      - booking_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-booking}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      PORT: 4003
+      DATABASE_URL: postgres://${POSTGRES_USER:-booking}:${POSTGRES_PASSWORD:-booking_password}@db:5432/${POSTGRES_DB:-booking}
+      PUBLIC_WEB_URL: ${PUBLIC_WEB_URL:-http://localhost:3002}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      CONSULTING_PRICE_CENTS: ${CONSULTING_PRICE_CENTS:-5000}
+      CURRENCY: ${CURRENCY:-usd}
+      GOOGLE_CLIENT_EMAIL: ${GOOGLE_CLIENT_EMAIL:-}
+      GOOGLE_PRIVATE_KEY: ${GOOGLE_PRIVATE_KEY:-}
+      GOOGLE_CALENDAR_ID: ${GOOGLE_CALENDAR_ID:-primary}
+      EMAIL_TRANSPORT: ${EMAIL_TRANSPORT:-ethereal}
+      EMAIL_FROM: ${EMAIL_FROM:-Consulting Booking <bookings@example.com>}
+    ports:
+      - "4003:4003"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:4003
+    ports:
+      - "3002:3002"
+    depends_on:
+      - backend
+
+volumes:
+  booking_db:
